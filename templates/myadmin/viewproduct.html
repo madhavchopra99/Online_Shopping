@@ -1,0 +1,38 @@
+{% extends 'myadmin/base.html' %}
+{% block content %}
+<table class="table table-sm-responsive table-hover">
+<thead class="thead-dark text-capitalize text-center">
+<tr>
+<th class="align-middle">ID</th>
+<th class="align-middle">Name</th>
+<th class="align-middle">Price</th>
+<th class="align-middle">price after discount</th>
+<th class="align-middle">description</th>
+<th class="align-middle">brand</th>
+<th class="align-middle">category</th>
+<th class="align-middle">photo</th>
+    <th></th>
+    <th></th>
+</tr>
+</thead>
+<tbody>
+{% for row in data %}
+<tr>
+<td>{{ row.id }}</td>
+<td class="text-capitalize">{{ row.name }}</td>
+<td>{{ row.price }}</td>
+<td>{{ row.priceafter }}</td>
+<td>{{ row.description|slice:":200" }}</td>
+<td class="text-uppercase">{{ row.brand }}</td>
+<td class="text-capitalize">{{ row.category }}</td>
+<td><img src="{{ row.photo }}" alt="Product Image" class="img-fluid"
+         style="max-height: 100px; max-width: 100px;"></td>
+<td><a class="btn btn-danger" href="{% url 'deleteproduct' id=row.id %}"
+            onclick="return confirm('You sure want to delete this product?')">Delete</a></td>
+<td><a class="btn btn-primary" href="{% url 'updateproduct' id=row.id%}">Update</a></td>
+</tr>
+{% endfor %}
+
+</tbody>
+</table>
+{% endblock %}

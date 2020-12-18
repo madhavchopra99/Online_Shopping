@@ -1,0 +1,16 @@
+{% extends 'myadmin/base.html' %}
+
+{% block content %}
+    <form method="post">
+    {% csrf_token %}
+    <div class="form-group row">
+        <label for="email" class="col-sm-2 col-form-label">Email</label>
+        <input type="email" class="col-sm-5 form-control" name="email" required>
+    </div>
+    <div class="row form-group">
+        <label for="password" class="col-sm-2 col-form-label">Password</label>
+        <input type="password" class="col-sm-5 form-control" name="password" required>
+    </div>
+        <input type="submit" class="btn btn-outline-primary offset-sm-2" value="Login">
+    </form>
+{% endblock content %}

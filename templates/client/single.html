@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Eshop a Flat E-Commerce Bootstrap Responsive Website Template | Single :: w3layouts</title>
+    {% include 'client/head.html' %}
+</head>
+<body>
+<!-- header-section-starts -->
+{% include 'client/header.html' %}
+<!-- header-section-ends -->
+
+<!-- content-section-starts -->
+<div class="container">
+    <div class="products-page">
+        <div class="products">
+            <div class="product-listy">
+                <h2>our Products</h2>
+                <ul class="product-list">
+                    <li><a href="">New Products</a></li>
+                    <li><a href="">Old Products</a></li>
+                    <li><a href="">T-shirts</a></li>
+                    <li><a href="">pants</a></li>
+                    <li><a href="">Dress</a></li>
+                    <li><a href="">Shorts</a></li>
+                    <li><a href="#">Shirts</a></li>
+                    <li><a href="register.html">Register</a></li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="new-product">
+            <div class="col-md-5 zoom-grid">
+                <div class="flexslider">
+                    <ul class="slides">
+                        <li data-thumb="{{ data.photo }}">
+                            <div class="thumb-image"><img src="{{ data.photo }}"
+                                                          data-imagezoom="true" class="img-responsive"
+                                                          alt="{{ data.photo }}"/></div>
+                        </li>
+                        <li data-thumb="{{ data.photo }}">
+                            <div class="thumb-image"><img src="{{ data.photo }}"
+                                                          data-imagezoom="true" class="img-responsive"
+                                                          alt="{{ data.photo }}"/></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-7 dress-info">
+                <div class="dress-name">
+                    <h3 class="text-capitalize">{{ data.name }}</h3>
+                    <span>${{ data.priceAfterdiscount }}</span>
+                    <div class="clearfix"></div>
+                    <p>{{ data.description }}</p>
+                </div>
+                <div class="span span1">
+                    <p class="left">BRAND</p>
+                    <p class="right text-uppercase">{{ data.brand }}</p>
+                    <div class="clearfix"></div>
+                </div>
+
+                <div class="purchase">
+                    <a href="#">Purchase Now</a>
+                    <div class="social-icons">
+                        <ul>
+                            <li><a class="facebook1" href="https://www.facebook.com/Gusto-Shop-107756351207217"
+                                   target="_blank"></a></li>
+                            <li><a class="twitter1" href="https://twitter.com/shop_gusto" target="_blank"></a></li>
+                            {#                            <li><a class="googleplus1" href="#"></a></li>#}
+                        </ul>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <script src="{% static 'client_static/js/imagezoom.js' %}"></script>
+                <!-- FlexSlider -->
+                <script defer src="{% static 'client_static/js/jquery.flexslider.js' %}"></script>
+                <script>
+                    // Can also be used with $(document).ready()
+                    $(window).load(function () {
+                        $('.flexslider').flexslider({
+                            animation: "slide",
+                            controlNav: "thumbnails"
+                        });
+                    });
+                </script>
+            </div>
+            <div class="clearfix"></div>
+
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+<div class="other-products products-grid">
+    <div class="container">
+        <header>
+            <h3 class="like text-center">Related Products</h3>
+        </header>
+        {% for row in related_data %}
+            <div class="col-md-4 product simpleCart_shelfItem text-center">
+                <a href="{% url 'single' id=row.id %}"><img src="{{ row.photo }}" alt="{{ row.photo }}"
+                                                            style="max-height: 200px; max-width: 200px;"/></a>
+                <div class="mask">
+                    <a href="{% url 'single' id=row.id %}">Quick View</a>
+                </div>
+                <a class="product_name" href="single.html">{{ row.name }}</a>
+                <p><a class="item_add" href="#"><i></i> <span class="item_price">${{ row.price }}</span></a></p>
+            </div>
+        {% endfor %}
+        <div class="clearfix"></div>
+    </div>
+</div>
+<!-- content-section-ends -->
+{% include 'client/footer.html' %}
+<script src="{% static 'client_static/js/responsive-tabs.js' %}"></script>
+<script type="text/javascript">
+    $('#myTab a').click(function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+    });
+
+    $('#moreTabs a').click(function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+    });
+
+    (function ($) {
+        // Test for making sure event are maintained
+        $('.js-alert-test').click(function () {
+            alert('Button Clicked: Event was maintained');
+        });
+        fakewaffle.responsiveTabs(['xs', 'sm']);
+    })(jQuery);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+{% extends 'myadmin/base.html' %}
+{% block title %}
+View
+{% endblock title %}
+{% block content %}
+<table class="table table-sm-responsive table-hover">
+<thead class="thead-dark text-uppercase text-center">
+<th>Id</th>
+<th>Name</th>
+<th>Description</th>
+<th></th>
+<th></th>
+</thead>
+<tbody>
+{% for row in data %}
+    <tr>
+    <td>{{ row.id }}</td>
+    <td class="text-capitalize">{{ row.name }}</td>
+    <td>{{ row.description }}</td>
+    <td><a href="{% url 'deletecategory' id=row.id %}" class="btn btn-danger"
+           onclick="return confirm('All the product catalog of this category will also be deleted.\n' +
+            'Do you wish to delete this category?')">Delete</a></td>
+    <td><a href="{% url 'updatecategory' id=row.id %}" class="btn btn-primary">Update</a></td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock content %}

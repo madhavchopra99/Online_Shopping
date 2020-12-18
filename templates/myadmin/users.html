@@ -1,0 +1,54 @@
+{% extends 'myadmin/base.html' %}
+
+{% block content %}
+    <table class="table table-sm-responsive table-hover">
+    <thead class="thead-dark">
+    <tr class="text-uppercase">
+        <th>name</th>
+        <th>email</th>
+        <th>permission</th>
+        <th></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in data %}
+    <tr>
+    <td>{{ row.name }}</td>
+    <td>{{ row.email }}</td>
+        <form method="post">
+        {% csrf_token %}
+            <input type="hidden" name="email" value="{{ row.email }}">
+    <td class="form-group">
+        <select name="permission" id="permission" class="form-control"
+        {% if row.permission == 'admin' %}
+            disabled
+        {% endif %} >
+            <option value="admin" {% if row.permission == 'admin' %}
+            selected
+            {% endif %} >Admin</option>
+            <option value="staff" {% if row.permission == 'staff' %}
+            selected
+            {% endif %}>Staff</option>
+            <option value="user" {% if row.permission == 'user' %}
+            selected
+            {% endif %}>User</option>
+        </select>
+    </td>
+    <td><input type="submit" onclick="return confirm('Do you want to update the permission of this user?')"
+               value="Update" class="btn btn-primary {% if row.permission == 'admin' %}
+    disabled
+    {% endif %}" {% if row.permission == 'admin' %}disabled{% endif %}></td>
+        </form>
+    <td><a href="{% url 'deleteuser' email=row.email %}"
+           onclick="return confirm('Do you want to delete this user?')"
+           class="btn btn-danger {% if row.permission == 'admin' %}
+    disabled
+    {% endif %}" >Delete</a></td>
+    </tr>
+    {% endfor %}
+
+    </tbody>
+    </table>
+
+{% endblock %}
