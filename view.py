@@ -479,21 +479,41 @@ def empty_cart(request):
 def add_to_cart(request, id):
     if not request.session.get('cart'):
         request.session['cart'] = []
-    total = 0
-    # if any([i['id'] == id for i in request.session.get('cart')]):
-    #     return JsonResponse({},status=406)
-    #
-    # con = sqlite3.connect('db.sqlite3')
-    # cr  = con.cursor()
-    # q = f"select id,name, priceAfterdiscount,photo from product where id = {id}"
-    # cr.execute(q)
-    # i = cr.fetchone()
-    #
-    return JsonResponse({'total':total})
+
+    all_items = request.session['cart']
+    for i in all_items:
+        if i['id'] == id:
+            i['qty'] += 1
+            i['total'] += i['price']
+            request.session['cart'] = all_items
+            total = sum(i['total'] for i in request.session.get('cart'))
+
+            return JsonResponse({'total':total,'length':len(request.session.get('cart'))})
+
+    con = sqlite3.connect('db.sqlite3')
+    cr = con.cursor()
+    q = f"select id,name,priceAfterdiscount,photo from product where id={id}"
+    cr.execute(q)
+    res = cr.fetchone()
+    con.close()
+    all_items.append(
+        {
+            'id': res[0],
+            'name': res[1],
+            'price': float(res[2]),
+            'photo': res[3],
+            'qty': 1,
+            'total': float(res[2])
+        }
+    )
+    request.session['cart'] = all_items
+    total = sum(i['total'] for i in request.session.get('cart'))
+
+    return JsonResponse({'total':total,'length':len(request.session.get('cart'))})
 
 
 def checkout(request):
-    return render(request, 'client/checkout.html')
+    return render(request, 'client/checkout.html',{'data':request.session.get('cart')})
 
 
 def contact(request):

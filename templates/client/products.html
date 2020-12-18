@@ -24,7 +24,7 @@
                     <li><a href="register.html">Register</a></li>
                 </ul>
             </div>
-{#            <div class="latest-bis">#}
+            {#            <div class="latest-bis">#}
             {#                <img src="{% static 'client_static/images/l4.jpg' %}" class="img-responsive" alt=""/>#}
             {#                <div class="offer">#}
             {#                    <p>40%</p>#}
@@ -96,22 +96,22 @@
                        title="grid">Grid View</a>
                     <a href="#" class="cbp-vm-icon cbp-vm-list" data-view="cbp-vm-view-list" title="list">List View</a>
                 </div>
-{#                <div class="pages">#}
-{#                    <div class="limiter visible-desktop">#}
-{#                        <label>Show</label>#}
-{#                        <select>#}
-{#                            <option value="" selected="selected">#}
-{#                                9#}
-{#                            </option>#}
-{#                            <option value="">#}
-{#                                15#}
-{#                            </option>#}
-{#                            <option value="">#}
-{#                                30#}
-{#                            </option>#}
-{#                        </select> per page#}
-{#                    </div>#}
-{#                </div>#}
+                {#                <div class="pages">#}
+                {#                    <div class="limiter visible-desktop">#}
+                {#                        <label>Show</label>#}
+                {#                        <select>#}
+                {#                            <option value="" selected="selected">#}
+                {#                                9#}
+                {#                            </option>#}
+                {#                            <option value="">#}
+                {#                                15#}
+                {#                            </option>#}
+                {#                            <option value="">#}
+                {#                                30#}
+                {#                            </option>#}
+                {#                        </select> per page#}
+                {#                    </div>#}
+                {#                </div>#}
                 <div class="clearfix"></div>
                 <ul>
                     {% for row in data %}
@@ -131,7 +131,8 @@
                                                     <div class="cart-left">
                                                         <p class="title">{{ row.name }}</p>
                                                     </div>
-                                                    <div class="pricey"><span class="item_price">${{ row.price }}</span></div>
+                                                    <div class="pricey"><span class="item_price">${{ row.price }}</span>
+                                                    </div>
                                                     <div class="clearfix"></div>
                                                 </div>
                                             </div>
@@ -141,7 +142,8 @@
                             <div class="cbp-vm-details">
                                 {{ row.description | slice:":100" }}...
                             </div>
-                            <a class="cbp-vm-icon cbp-vm-add item_add" onclick="add_to_cart({{ row.id }})">Add to cart</a>
+                            <a class="cbp-vm-icon cbp-vm-add item_add" onclick="add_to_cart({{ row.id }})"
+                               style="cursor: pointer;">Add to cart</a>
                         </div>
                         </li>
                     {% endfor %}
@@ -156,15 +158,6 @@
 </div>
 <!-- content-section-ends -->
 {% include 'client/footer.html' %}
-<script>
-    function add_to_cart(pid) {
-        $.getJSON("/add_to_cart/"+pid,function (data,status) {
-            alert(JSON.stringify(data.total))
-            if (status == 'success'){
-                {#alert('success')#}
-            }
-        });
-    }
-</script>
+
 </body>
 </html>

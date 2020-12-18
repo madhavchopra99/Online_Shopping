@@ -35,9 +35,9 @@
             <div class="header-right">
                 <div class="cart box_1">
                     <a href="{% url 'checkout' %}">
-                        <h3><span class="simpleCart_total" id="balance"> $0.00 </span> (<span id="simpleCart_quantity"
-                                                                                 class="simpleCart_quantity"> 0 </span>
-                            items)<img src="{% static 'client_static/images/bag.png' %}" alt=""></h3>
+                        <h3><span class="simpleCart_total" id="balance"> Show Cart </span>
+                            {#(<span id="simpleCart_quantity" class="simpleCart_quantity"> 0 </span>items)#}
+                            <img src="{% static 'client_static/images/bag.png' %}" alt=""></h3>
                     </a>
                     <p><a class="simpleCart_empty"
                           onclick="emptycart()">Empty cart</a>
@@ -48,8 +48,7 @@
                                 $.get("{% url 'empty_cart' %}", function (data, status) {
                                     if (status == 'success') {
                                         alert('The Cart is been emptied.')
-                                    }
-                                    else{
+                                    } else {
                                         alert("An unexpected error occured.")
                                     }
                                 })
