@@ -28,6 +28,7 @@ function hideURLbar() {
         $.getJSON("/add_to_cart/" + pid, function (data, status) {
             if (status == 'success') {
                 alert("Total Payable Amount is " + data.total)
+                $('#simpleCart_quantity').html(data.length+' ')
             } else {
                 alert('Unexpected ERROR has occurred.')
             }

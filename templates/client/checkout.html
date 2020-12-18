@@ -26,27 +26,37 @@
         </div>
         <h2>MY SHOPPING BAG ({{ data| length }})</h2>
         <div class="cart-gd">
-            <script>$(document).ready(function (c) {
-                $('.close1').on('click', function (c) {
-                    $('.cart-header').fadeOut('slow', function (c) {
-                        $('.cart-header').remove();
-
-                    });
-                });
-            });
+            <script>
+                function inc_dec(pid, operation) {
+                    $.get('/inc_dec/' + pid + '/' + operation, function (data, status) {
+                        if (status == 'success') {
+                            window.location.reload();
+                        } else {
+                            alert('Unexpected error occurred.')
+                        }
+                    })
+                }
             </script>
             {% for row in data %}
                 <div class="cart-header">
-                    <div class="close1"></div>
+                    <a onclick="inc_dec({{ row.id }},'remove')">
+                        <div class="close1"></div>
+                    </a>
                     <div class="cart-sec simpleCart_shelfItem">
                         <div class="cart-item cyc">
-                            <img src="{{ row.photo }}" class="img-responsive" alt="{{ row.photo }}">
+                            <a href="{% url 'single' id=row.id %}"><img src="{{ row.photo }}" class="img-responsive"
+                                                                        alt="{{ row.photo }}"></a>
                         </div>
                         <div class="cart-item-info">
-                            <h3><a href="{% url 'single' id=row.id %}"> {{ row.name }} </a></h3>
+                            <h3><a href="{% url 'single' id=row.id %}" class="text-capitalize"> {{ row.name }} </a></h3>
                             <ul class="qty">
-                                <li><p>Quantity: {{ row.qty }}</p></li>
-                                <li>Total: {{ row.total }}</li>
+                                <li><p>Quantity: <a onclick="inc_dec({{ row.id }},'minus')"
+                                                    class="btn glyphicon-minus"></a>
+                                    {{ row.qty }}
+                                    <a onclick="inc_dec({{ row.id }},'plus')" class="btn glyphicon-plus"></a></p>
+                                </li>
+                                <li>Price: {{ row.price }}</li>
+                                <li>Total Price: {{ row.total }}</li>
                                 {#                                <li><p>FREE delivery</p></li>#}
                             </ul>
                             <div class="delivery">
@@ -56,72 +66,80 @@
                             </div>
                         </div>
                         <div class="clearfix"></div>
-
                     </div>
                 </div>
             {% endfor %}
+            {% if request.session.cart %}
+                <div class="pull-right">
+                    TOTAL Payable: &#8377;{{ total }}<br>
+                    {% if  request.session.user %}
+                        <a href="#" class="btn btn-success btn-sm">Proceed to Pay</a>
+                    {% else %}
+                        <a href="{% url 'account' %}" class="btn btn-primary btn-sm">Login to Proceed</a>
+                    {% endif %}
+                </div>
+            {% endif %}
 
-
-            {#            <script>$(document).ready(function (c) {#}
-            {#                $('.close2').on('click', function (c) {#}
-            {#                    $('.cart-header2').fadeOut('slow', function (c) {#}
-            {#                        $('.cart-header2').remove();#}
-            {#                    });#}
-            {#                });#}
-            {#            });#}
-            {#            </script>#}
-            {#            <div class="cart-header2">#}
-            {#                <div class="close2"></div>#}
-            {#                <div class="cart-sec simpleCart_shelfItem">#}
-            {#                    <div class="cart-item cyc">#}
-            {#                        <img src="images/l2.jpg" class="img-responsive" alt="">#}
-            {#                    </div>#}
-            {#                    <div class="cart-item-info">#}
-            {#                        <h3><a href="#"> Lorem Ipsum is not simply </a><span>Pickup time:</span></h3>#}
-            {#                        <ul class="qty">#}
-            {#                            <li><p>Min. order value:</p></li>#}
-            {#                            <li><p>FREE delivery</p></li>#}
-            {#                        </ul>#}
-            {#                        <div class="delivery">#}
-            {#                            <p>Service Charges : $10.00</p>#}
-            {#                            <span>Delivered in 3-3:30 hours</span>#}
-            {#                            <div class="clearfix"></div>#}
-            {#                        </div>#}
-            {#                    </div>#}
-            {#                    <div class="clearfix"></div>#}
+            {#                        <script>$(document).ready(function (c) {#}
+            {#                            $('.close2').on('click', function (c) {#}
+            {#                                $('.cart-header2').fadeOut('slow', function (c) {#}
+            {#                                    $('.cart-header2').remove();#}
+            {#                                });#}
+            {#                            });#}
+            {#                        });#}
+            {#                        </script>#}
+            {#                        <div class="cart-header2">#}
+            {#                            <div class="close2"></div>#}
+            {#                            <div class="cart-sec simpleCart_shelfItem">#}
+            {#                                <div class="cart-item cyc">#}
+            {#                                    <img src="images/l2.jpg" class="img-responsive" alt="">#}
+            {#                                </div>#}
+            {#                                <div class="cart-item-info">#}
+            {#                                    <h3><a href="#"> Lorem Ipsum is not simply </a><span>Pickup time:</span></h3>#}
+            {#                                    <ul class="qty">#}
+            {#                                        <li><p>Min. order value:</p></li>#}
+            {#                                        <li><p>FREE delivery</p></li>#}
+            {#                                    </ul>#}
+            {#                                    <div class="delivery">#}
+            {#                                        <p>Service Charges : $10.00</p>#}
+            {#                                        <span>Delivered in 3-3:30 hours</span>#}
+            {#                                        <div class="clearfix"></div>#}
+            {#                                    </div>#}
+            {#                                </div>#}
+            {#                                <div class="clearfix"></div>#}
             {##}
-            {#                </div>#}
-            {#            </div>#}
-            {#            <script>$(document).ready(function (c) {#}
-            {#                $('.close3').on('click', function (c) {#}
-            {#                    $('.cart-header3').fadeOut('slow', function (c) {#}
-            {#                        $('.cart-header3').remove();#}
-            {#                    });#}
-            {#                });#}
-            {#            });#}
-            {#            </script>#}
-            {#            <div class="cart-header3">#}
-            {#                <div class="close3"></div>#}
-            {#                <div class="cart-sec simpleCart_shelfItem">#}
-            {#                    <div class="cart-item cyc">#}
-            {#                        <img src="images/l3.jpg" class="img-responsive" alt="">#}
-            {#                    </div>#}
-            {#                    <div class="cart-item-info">#}
-            {#                        <h3><a href="#"> Lorem Ipsum is not simply </a><span>Pickup time:</span></h3>#}
-            {#                        <ul class="qty">#}
-            {#                            <li><p>Min. order value:</p></li>#}
-            {#                            <li><p>FREE delivery</p></li>#}
-            {#                        </ul>#}
-            {#                        <div class="delivery">#}
-            {#                            <p>Service Charges : $10.00</p>#}
-            {#                            <span>Delivered On Tomorrow</span>#}
-            {#                            <div class="clearfix"></div>#}
+            {#                            </div>#}
             {#                        </div>#}
-            {#                    </div>#}
-            {#                    <div class="clearfix"></div>#}
+            {#                        <script>$(document).ready(function (c) {#}
+            {#                            $('.close3').on('click', function (c) {#}
+            {#                                $('.cart-header3').fadeOut('slow', function (c) {#}
+            {#                                    $('.cart-header3').remove();#}
+            {#                                });#}
+            {#                            });#}
+            {#                        });#}
+            {#                        </script>#}
+            {#                        <div class="cart-header3">#}
+            {#                            <div class="close3"></div>#}
+            {#                            <div class="cart-sec simpleCart_shelfItem">#}
+            {#                                <div class="cart-item cyc">#}
+            {#                                    <img src="images/l3.jpg" class="img-responsive" alt="">#}
+            {#                                </div>#}
+            {#                                <div class="cart-item-info">#}
+            {#                                    <h3><a href="#"> Lorem Ipsum is not simply </a><span>Pickup time:</span></h3>#}
+            {#                                    <ul class="qty">#}
+            {#                                        <li><p>Min. order value:</p></li>#}
+            {#                                        <li><p>FREE delivery</p></li>#}
+            {#                                    </ul>#}
+            {#                                    <div class="delivery">#}
+            {#                                        <p>Service Charges : $10.00</p>#}
+            {#                                        <span>Delivered On Tomorrow</span>#}
+            {#                                        <div class="clearfix"></div>#}
+            {#                                    </div>#}
+            {#                                </div>#}
+            {#                                <div class="clearfix"></div>#}
             {##}
-            {#                </div>#}
-            {#            </div>#}
+            {#                            </div>#}
+            {#                        </div>#}
         </div>
     </div>
 </div>

@@ -35,8 +35,8 @@
             <div class="header-right">
                 <div class="cart box_1">
                     <a href="{% url 'checkout' %}">
-                        <h3><span class="simpleCart_total" id="balance"> Show Cart </span>
-                            {#(<span id="simpleCart_quantity" class="simpleCart_quantity"> 0 </span>items)#}
+                        <h3><span class="simpleCart_total" id="balance">Show Cart</span>
+                            (<span id="simpleCart_quantity" class="simpleCart_quantity">{{ request.session.cart | length }} </span>items)
                             <img src="{% static 'client_static/images/bag.png' %}" alt=""></h3>
                     </a>
                     <p><a class="simpleCart_empty"
@@ -48,6 +48,7 @@
                                 $.get("{% url 'empty_cart' %}", function (data, status) {
                                     if (status == 'success') {
                                         alert('The Cart is been emptied.')
+                                        window.location.reload();
                                     } else {
                                         alert("An unexpected error occured.")
                                     }

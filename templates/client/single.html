@@ -49,7 +49,7 @@
             <div class="col-md-7 dress-info">
                 <div class="dress-name">
                     <h3 class="text-capitalize">{{ data.name }}</h3>
-                    <span>${{ data.priceAfterdiscount }}</span>
+                    <span>&#8377;{{ data.priceAfterdiscount }}</span>
                     <div class="clearfix"></div>
                     <p>{{ data.description }}</p>
                 </div>
@@ -103,7 +103,7 @@
                     <a href="{% url 'single' id=row.id %}">Quick View</a>
                 </div>
                 <a class="product_name" href="single.html">{{ row.name }}</a>
-                <p><a class="item_add" href="#"><i></i> <span class="item_price">${{ row.price }}</span></a></p>
+                <p><a class="item_add" href="#"><i></i> <span class="item_price">&#8377;{{ row.price }}</span></a></p>
             </div>
         {% endfor %}
         <div class="clearfix"></div>

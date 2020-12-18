@@ -513,8 +513,33 @@ def add_to_cart(request, id):
 
 
 def checkout(request):
-    return render(request, 'client/checkout.html',{'data':request.session.get('cart')})
+    if not request.session.get('cart'):
+        return render(request,'client/checkout.html')
 
+    total= sum(i['total'] for i in request.session.get('cart'))
+    return render(request, 'client/checkout.html',{'data':request.session.get('cart'),'total':total})
+
+def inc_dec(request,id,operation):
+    all_items = request.session.get('cart')
+    for i in all_items:
+        if i['id'] == id:
+            if operation == 'plus':
+                i['qty'] += 1
+                i['total'] += i['price']
+                break
+            elif operation == 'minus':
+                if i['qty'] == 1:
+                    all_items.remove(i)
+                    break
+                else:
+                    i['qty'] -= 1
+                    i['total'] -= 1
+                    break
+            elif operation == 'remove':
+                all_items.remove(i)
+                break
+    request.session['cart'] = all_items
+    return HttpResponse(status=200)
 
 def contact(request):
     return render(request, 'client/contact.html')

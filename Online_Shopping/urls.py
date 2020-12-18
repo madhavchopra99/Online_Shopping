@@ -46,6 +46,7 @@ urlpatterns = [
     path('categorynames',categorynames,name='categorynames'),
     path('add_to_cart/<int:id>',add_to_cart,name='add_to_cart'),
     path('empty_cart',empty_cart,name='empty_cart'),
+    path('inc_dec/<int:id>/<str:operation>',inc_dec,name='inc_dev'),
     # end of client urls
     path('TnC',TnC,name='TnC'),
     path('privacy',privacy,name='privacy')
