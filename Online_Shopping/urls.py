@@ -47,6 +47,9 @@ urlpatterns = [
     path('add_to_cart/<int:id>',add_to_cart,name='add_to_cart'),
     path('empty_cart',empty_cart,name='empty_cart'),
     path('inc_dec/<int:id>/<str:operation>',inc_dec,name='inc_dev'),
+    path('proceed_to_pay',proceed_to_pay,name='proceed_to_pay'),
+    path('payment_action',payment_action,name='payment_action'),
+    path('thankspage',thankspage),
     # end of client urls
     path('TnC',TnC,name='TnC'),
     path('privacy',privacy,name='privacy')

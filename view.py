@@ -41,12 +41,12 @@ def adminhome(request):
 
 
 def logout(request):
-    request.session.clear()
+    del request.session['user'], request.sesion['user_permission']
     return redirect(myadmin)
 
 
 def userlogout(request):
-    request.session.clear()
+    del request.session['user'], request.session['user_permission']
     return redirect(home)
 
 
@@ -543,6 +543,57 @@ def inc_dec(request,id,operation):
 
 def contact(request):
     return render(request, 'client/contact.html')
+
+def proceed_to_pay(request):
+    if not request.session.get('cart') or not request.session.get('user'):
+        return HttpResponse('Not Found',status=404)
+
+    total = sum(i['total'] for i in request.session.get('cart'))
+    return render(request,'client/proceed_to_pay.html',{'total':total})
+
+@csrf_exempt
+def payment_action(request):
+    name = request.POST['name']
+    email = request.POST['email']
+    address = request.POST['address']
+    total = request.POST['total']
+    paymentmode = request.POST['paymentmode']
+    from datetime import date
+    mobile = request.POST['mobile']
+    dateOfOrder = date.today()
+
+    if paymentmode == 'Cash':
+        payStatus = 'pending'
+    else:
+        payStatus = 'Done'
+
+    conn = sqlite3.connect('db.sqlite3')
+    cr = conn.cursor()
+    Query_for_bill = f"insert into billing (`email`, `address`, `totalAmount`, `mobile`, `typeofbill`, `dateofpayment`, `paystatus`,`name`) values ('{email}', '{address}','{total}', '{mobile}','{paymentmode}','{dateOfOrder}', '{payStatus}','{name}')"
+    cr.execute(Query_for_bill)
+    conn.commit()
+
+    select_query = "select bill_id from billing order by bill_id DESC"
+    cr = conn.cursor()
+    cr.execute(select_query)
+    result = cr.fetchone()
+
+    for item in request.session['cart']:
+        query_detail = "insert into billDetail (`title`, `price`, `qty`, `total_price`, `billing_id`) values ('{}','{}','{}','{}','{}')".format(
+            item['name'], item['price'], item['qty'], item['total'], result[0])
+        cr = conn.cursor()
+        cr.execute(query_detail)
+        conn.commit()
+    return JsonResponse({'billid': result[0]})
+
+
+def thankspage(request):
+    try:
+        del request.session['cart']
+    except:
+        pass
+    billid = request.GET['billid']
+    return render(request, 'client/thankyou.html', {'billid': billid})
 
 
 # end of client views

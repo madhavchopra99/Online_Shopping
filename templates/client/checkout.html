@@ -73,7 +73,7 @@
                 <div class="pull-right">
                     TOTAL Payable: &#8377;{{ total }}<br>
                     {% if  request.session.user %}
-                        <a href="#" class="btn btn-success btn-sm">Proceed to Pay</a>
+                        <a href="{% url 'proceed_to_pay' %}" class="btn btn-success btn-sm">Proceed to Pay</a>
                     {% else %}
                         <a href="{% url 'account' %}" class="btn btn-primary btn-sm">Login to Proceed</a>
                     {% endif %}

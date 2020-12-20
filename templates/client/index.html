@@ -82,7 +82,7 @@
                 </div>
                 <div class="shipping-text">
                     <h3>Free Shipping</h3>
-                    <p>on orders over $ 199</p>
+                    <p>on orders over &#8377; 349</p>
                 </div>
                 <div class="clearfix"></div>
             </div>
@@ -182,7 +182,7 @@
                                            alt="{{ row.photo }}" style="max-height: 200px;"/></a>
                 <div class="product liked-product simpleCart_shelfItem">
                     <a class="like_name" href="single.html">{{ row.name }}</a>
-                    <p><a class="item_add" href="#"><i></i> <span class=" item_price">$ {{ row.price }}</span></a></p>
+                    <p><a class="item_add" onclick="add_to_cart({{ row.id }})"><i></i> <span class=" item_price">&#8377; {{ row.price }}</span></a></p>
                 </div>
             </li>
             {% endfor %}
