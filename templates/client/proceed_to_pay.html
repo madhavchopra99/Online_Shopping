@@ -32,6 +32,7 @@
     <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
             <form id="clientForm">
+                {% csrf_token %}
                 <div class="form-group">
                     <label>Name</label>
                     <input type="text" data-rule-required="true" data-msg-required="Enter Full Name"
@@ -88,6 +89,7 @@
     function pay() {
         if ($('#clientForm').valid()) {
             var formdata = new FormData();
+            formdata.append('csrfmiddlewaretoken','{{ csrf_token }}')
             formdata.append('name', document.getElementById('name').value);
             formdata.append('email', document.getElementById('email').value);
             formdata.append('address', document.getElementById('address').value);

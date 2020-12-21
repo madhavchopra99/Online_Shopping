@@ -3,11 +3,23 @@ from django.http import HttpResponse, JsonResponse
 from django.core.files.storage import FileSystemStorage
 import sqlite3
 from django.contrib import messages
-from hashlib import sha3_512
+from hashlib import sha3_512,sha3_256,md5
 import random
 from django.views.decorators.csrf import csrf_exempt
 
 adminlogin = ('staff', 'admin')
+
+
+def hash_password(email, password):
+    hash_email = md5(email.encode()).hexdigest()
+    hash1_password = sha3_256(password.encode()).hexdigest()
+
+    password2 = hash_email + hash1_password + hash_email
+
+    hash2_password = sha3_512(password2.encode()).hexdigest()
+
+    return hash2_password
+
 
 
 def myadmin(request):
@@ -16,7 +28,8 @@ def myadmin(request):
 
     if request.method == 'POST':
         email = request.POST.get('email').lower()
-        password = sha3_512(request.POST.get('password').encode('utf-8')).hexdigest()
+        password = hash_password(email,request.POST.get('password'))
+
         con = sqlite3.connect('db.sqlite3')
         cr = con.cursor()
         q = f"select * from user"
@@ -41,7 +54,7 @@ def adminhome(request):
 
 
 def logout(request):
-    del request.session['user'], request.sesion['user_permission']
+    del request.session['user'], request.session['user_permission']
     return redirect(myadmin)
 
 
@@ -394,7 +407,7 @@ def account(request):
 
     if request.method == 'POST':
         email = request.POST.get('email')
-        password = sha3_512(request.POST.get('password').encode('utf-8')).hexdigest()
+        password = hash_password(email,request.POST.get('password'))
 
         con = sqlite3.connect('db.sqlite3')
         cr = con.cursor()
@@ -418,7 +431,7 @@ def register(request):
     if request.method == "POST":
         name = request.POST.get('name').lower()
         email = request.POST.get('email').lower()
-        password = sha3_512(request.POST.get('password1').encode('utf-8')).hexdigest()
+        password = hash_password(email,request.POST.get('password1'))
 
         con = sqlite3.connect('db.sqlite3')
         cr = con.cursor()
@@ -551,7 +564,7 @@ def proceed_to_pay(request):
     total = sum(i['total'] for i in request.session.get('cart'))
     return render(request,'client/proceed_to_pay.html',{'total':total})
 
-@csrf_exempt
+
 def payment_action(request):
     name = request.POST['name']
     email = request.POST['email']
