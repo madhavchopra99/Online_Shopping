@@ -13,10 +13,8 @@
                 }
             })
             $('#register').click(function () {
-                if ($('#password1').val() == $('#password2').val()) {
-                    return;
-                } else {
-                    alert('Passwords Does\'t Match')
+                if ($('#password1').val() != $('#password2').val()) {
+                    alert('Passwords Doesn\'t Match');
                 }
             })
         })
@@ -77,7 +75,8 @@
                         {#                            <li class="text-info">Mobile Number:</li>#}
                         {#                            <li><input type="text" value=""></li>#}
                         {#                        </ul>#}
-                        <input type="submit" id="register" value="REGISTER NOW" disabled>
+                        <input type="submit" onclick="return $('#password1').val() == $('#password2').val()"
+                               id="register" value="REGISTER NOW" disabled>
 
                         <div class="form-check checkbox-inline">
                             <input type="checkbox" class="form-check-input" id="materialUnchecked">
