@@ -554,8 +554,10 @@ def inc_dec(request,id,operation):
     request.session['cart'] = all_items
     return HttpResponse(status=200)
 
+
 def contact(request):
     return render(request, 'client/contact.html')
+
 
 def proceed_to_pay(request):
     if not request.session.get('cart') or not request.session.get('user'):
