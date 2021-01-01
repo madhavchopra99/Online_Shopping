@@ -5,7 +5,7 @@ import sqlite3
 from django.contrib import messages
 from hashlib import sha3_512,sha3_256,md5
 import random
-from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
 
 adminlogin = ('staff', 'admin')
 
@@ -99,13 +99,13 @@ def viewcategory(request):
     context = {}
     con = sqlite3.connect('db.sqlite3')
     cr = con.cursor()
-    q = f"select id,name,description from category"
+    q = f"select id,name,description from category order by name"
     cr.execute(q)
     data = []
 
     for row in cr.fetchall():
         data.append({'id': row[0], 'name': row[1], 'description': row[2]})
-    data.sort(key=lambda x: x.get('name'))
+    # data.sort(key=lambda x: x.get('name'))
 
     context['data'] = data
     con.close()
@@ -222,13 +222,12 @@ def viewproduct(request):
     for i in cr.fetchall():
         category[i[0]] = i[1]
 
-    q = "select * from product"
+    q = "select * from product order by name"
     cr.execute(q)
     data = []
     for i in cr.fetchall():
         data.append({'id': i[0], 'name': i[1], 'price': i[2], 'priceafter': i[3], 'description': i[4],
                      'brand': i[5], 'category': category[i[6]], 'photo': i[7]})
-    data.sort(key=lambda x: x.get('name'))
 
     context['data'] = data
     con.close()
@@ -328,13 +327,12 @@ def users(request):
         cr.execute(q)
         con.commit()
 
-    q = f"select name,email,permission from user"
+    q = f"select name,email,permission from user order by name"
     cr.execute(q)
     data = []
 
     for i in cr.fetchall():
         data.append({'name': i[0], 'email': i[1], 'permission': i[2]})
-    data.sort(key=lambda x: x.get('name'))
 
     context['data'] = data
     con.close()
@@ -478,7 +476,11 @@ def products(request, id):
     for i in cr.fetchall():
         data.append({'id': i[0], 'name': i[1], 'price': i[2], 'description': i[3], 'photo': i[4]})
 
-    context['data'] = data
+    paginator = Paginator(data,9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context['data'] = page_obj
+    context['pages'] = range(1,int(page_obj.paginator.num_pages+1)) if page_obj.paginator.num_pages>1 else None
     return render(request, 'client/products.html', context)
 
 

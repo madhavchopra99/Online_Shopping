@@ -53,7 +53,6 @@
             {#                    <li><a href="#">Equipment</a></li>#}
             {#                </ul>#}
             {#            </div>#}
-
         </div>
         <div class="new-product">
             <div class="new-product-top">
@@ -65,29 +64,36 @@
                 <div class="clearfix"></div>
             </div>
             <div class="mens-toolbar">
-                <div class="sort">
-                    <div class="sort-by">
-                        <label>Sort By</label>
-                        <select>
-                            <option value="">
-                                Position
-                            </option>
-                            <option value="">
-                                Name
-                            </option>
-                            <option value="">
-                                Price
-                            </option>
-                        </select>
-                        <a href=""><img src="{% static 'client_static/images/arrow2.gif' %}" alt=""
-                                        class="v-middle"></a>
-                    </div>
-                </div>
-                <ul class="women_pagenation">
-                    <li>Page:</li>
-                    <li class="active"><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                </ul>
+                {#                <div class="sort">#}
+                {#                    <div class="sort-by">#}
+                {#                        <label>Sort By</label>#}
+                {#                        <select>#}
+                {#                            <option value="">#}
+                {#                                Date#}
+                {#                            </option>#}
+                {#                            <option value="">#}
+                {#                                Name#}
+                {#                            </option>#}
+                {#                            <option value="">#}
+                {#                                Price#}
+                {#                            </option>#}
+                {#                        </select>#}
+                {#                        <a href=""><img src="{% static 'client_static/images/arrow2.gif' %}" alt=""#}
+                {#                                        class="v-middle"></a>#}
+                {#                    </div>#}
+                {#                </div>#}
+                {% if pages %}
+                    <ul class="women_pagenation">
+                        <li>Page:</li>
+                        {% for page in pages %}
+                            <li {% if data.number == page %}
+                                class="active"
+                            {% endif %}
+                            ><a href="?page={{ page }}">{{ page }}</a></li>
+                        {% endfor %}
+                        {#                    <li class="active"><a href="?page=1">1</a></li>#}
+                    </ul>
+                {% endif %}
                 <div class="clearfix"></div>
             </div>
             <div id="cbp-vm" class="cbp-vm-switcher cbp-vm-view-grid">
@@ -131,7 +137,8 @@
                                                     <div class="cart-left">
                                                         <p class="title">{{ row.name }}</p>
                                                     </div>
-                                                    <div class="pricey"><span class="item_price">&#8377;{{ row.price }}</span>
+                                                    <div class="pricey"><span
+                                                            class="item_price">&#8377;{{ row.price }}</span>
                                                     </div>
                                                     <div class="clearfix"></div>
                                                 </div>
