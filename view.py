@@ -363,10 +363,12 @@ def home(request):
     q = f"select id,name,priceAfterdiscount,photo from product"
     cr.execute(q)
     data = []
-    res = random.choices(cr.fetchall(), k=5)
-
-    for i in res:
+    res = cr.fetchall()
+    for j in range(5):
+        i = random.choice(res)
+        res.remove(i)
         data.append({'id': i[0], 'name': i[1], 'price': i[2], 'photo': i[3]})
+
     context['data'] = data
 
     con.close()
@@ -389,10 +391,14 @@ def single(request, id):
 
     q = f"select id,name,priceAfterdiscount,photo from product where id!={id} and category_id={data[6]}"
     cr.execute(q)
-    res = random.choices(cr.fetchall(), k=3)
+    res = cr.fetchall()
+
     related_data = []
-    for i in res:
+    for j in range(3):
+        i = random.choice(res)
+        res.remove(i)
         related_data.append({'id': i[0], 'name': i[1], 'price': i[2], 'photo': i[3]})
+
     context['related_data'] = related_data
     con.close()
 
@@ -453,7 +459,7 @@ def categorynames(request):
 
         con = sqlite3.connect('db.sqlite3')
         cr = con.cursor()
-        q = f"select id, name from category"
+        q = f"select id, name from category order by name"
         cr.execute(q)
         data = []
         for i in cr.fetchall():
