@@ -353,6 +353,45 @@ def deleteuser(request, email):
 
     return redirect(users)
 
+def orders(request):
+    if not request.session.get('user_permission') in adminlogin:
+        return redirect(myadmin)
+
+    context = {}
+    con = sqlite3.connect('db.sqlite3')
+    cr = con.cursor()
+    if request.POST:
+        id = request.POST.get('id')
+        paystatus = request.POST.get('paystatus')
+        q = f"update billing set paystatus='{paystatus}' where bill_id={id}"
+        cr.execute(q)
+        con.commit()
+
+    q = f"select * from billing order by bill_id desc"
+    cr.execute(q)
+    data = []
+    for i in cr.fetchall():
+        data.append({'id':i[0],'name':i[1],'email':i[2],'address':i[3],'amount':i[4],'mobile':i[5],'typeofbill':i[6],'dateofpayment':i[7],'paystatus':i[8]})
+    context['data'] = data
+    con.close()
+    return render(request,'myadmin/orders.html',context)
+
+
+def orderdetail(request,bid):
+    if not request.session.get('user_permission') in adminlogin:
+        return redirect(myadmin)
+
+    context = {}
+    con = sqlite3.connect('db.sqlite3')
+    cr = con.cursor()
+    q = f"select * from billDetail where  billing_id = {bid}"
+    cr.execute(q)
+    data = []
+    for i in cr.fetchall():
+        data.append({'id':i[0],'title':i[1],'price':i[2],'qty':i[3],'total':i[4]})
+    context['data']=data
+    context['total'] = sum(i['total'] for i in data)
+    return render(request,'myadmin/orderdetail.html',context)
 
 # client views
 
@@ -588,7 +627,7 @@ def payment_action(request):
     if paymentmode == 'Cash':
         payStatus = 'pending'
     else:
-        payStatus = 'Done'
+        payStatus = 'paid'
 
     conn = sqlite3.connect('db.sqlite3')
     cr = conn.cursor()

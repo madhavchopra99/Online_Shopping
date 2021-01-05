@@ -1,0 +1,31 @@
+{% extends 'myadmin/base.html' %}
+
+{% block content %}
+<table class="table table-sm-responsive table-hover">
+<thead class="thead-dark text-capitalize">
+<tr>
+    <th>id</th>
+    <th>title</th>
+    <th>price</th>
+    <th>quantity</th>
+    <th>total price</th>
+</tr>
+</thead>
+<tbody>
+{% for row in data %}
+<tr>
+<td>{{ row.id }}</td>
+<td>{{ row.title }}</td>
+<td>{{ row.price }}</td>
+<td>{{ row.qty }}</td>
+<td>{{ row.total }}</td>
+</tr>
+{% endfor %}
+<tr>
+    <td></td>
+    <td colspan="3">Total</td>
+    <th>{{ total }}</th>
+</tr>
+</tbody>
+</table>
+{% endblock %}

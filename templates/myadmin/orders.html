@@ -1,0 +1,58 @@
+{% extends 'myadmin/base.html' %}
+
+{% block content %}
+    <table class="table table-sm-responsive table-hover rounded-lg">
+        <thead class="thead-dark text-capitalize text-center">
+        <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>email</th>
+            <th>address</th>
+            <th>totalAmount</th>
+            <th>mobile</th>
+            <th>type of bill</th>
+            <th>date of payment</th>
+            <th>pay status</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for row in data %}
+            <tr>
+                <td>{{ row.id }}</td>
+                <td>{{ row.name }}</td>
+                <td>{{ row.email }}</td>
+                <td>{{ row.address }}</td>
+                <td>{{ row.amount }}</td>
+                <td>{{ row.mobile }}</td>
+                <td>{{ row.typeofbill }}</td>
+                <td>{{ row.dateofpayment }}</td>
+                <form method="post">
+                    {% csrf_token %}
+                    <td>
+                        <input type="hidden" name="id" value="{{ row.id }}">
+                        <select name="paystatus" id="" class="form-control">
+                            <option value="paid"
+                                    {% if row.paystatus == 'paid' %}
+                                    selected
+                                    {% endif %}
+                            >Paid
+                            </option>
+                            <option value="pending"
+                                    {% if row.paystatus == 'pending' %}
+                                    selected
+                                    {% endif %}
+                            >Pending
+                            </option>
+                        </select>
+                    </td>
+                    <td><input type="submit" value="Update" class="btn btn-primary btn-sm"></td>
+                </form>
+                <td><a href="{% url 'orderdetail' bid=row.id %}" class="btn btn-primary btn-sm">Details</a></td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}

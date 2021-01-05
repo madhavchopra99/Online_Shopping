@@ -34,6 +34,8 @@ urlpatterns = [
     path('logout/',logout,name='logout'),
     path('users/',users,name='users'),
     path('deleteuser/<str:email>',deleteuser,name='deleteuser'),
+    path('orders',orders,name='orders'),
+    path('orderdetail/<int:bid>',orderdetail,name='orderdetail'),
     # client urls
     path('',home, name='home'),
     path('account/',account,name='account'),
