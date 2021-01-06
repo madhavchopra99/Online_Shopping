@@ -3,9 +3,11 @@ from django.http import HttpResponse, JsonResponse
 from django.core.files.storage import FileSystemStorage
 import sqlite3
 from django.contrib import messages
-from hashlib import sha3_512,sha3_256,md5
+from hashlib import sha3_512, sha3_256, md5
 import random
 from django.core.paginator import Paginator
+import mail
+from django.views.decorators.csrf import csrf_exempt
 
 adminlogin = ('staff', 'admin')
 
@@ -20,15 +22,14 @@ def hash_password(email, password):
 
     return hash2_password
 
-
-
+# print(hash_password('madhav@gmail.com','welcome'))
 def myadmin(request):
     if request.session.get('user_permission') in adminlogin:
         return redirect(adminhome)
 
     if request.method == 'POST':
         email = request.POST.get('email').lower()
-        password = hash_password(email,request.POST.get('password'))
+        password = hash_password(email, request.POST.get('password'))
 
         con = sqlite3.connect('db.sqlite3')
         cr = con.cursor()
@@ -353,6 +354,7 @@ def deleteuser(request, email):
 
     return redirect(users)
 
+
 def orders(request):
     if not request.session.get('user_permission') in adminlogin:
         return redirect(myadmin)
@@ -371,13 +373,14 @@ def orders(request):
     cr.execute(q)
     data = []
     for i in cr.fetchall():
-        data.append({'id':i[0],'name':i[1],'email':i[2],'address':i[3],'amount':i[4],'mobile':i[5],'typeofbill':i[6],'dateofpayment':i[7],'paystatus':i[8]})
+        data.append({'id': i[0], 'name': i[1], 'email': i[2], 'address': i[3], 'amount': i[4], 'mobile': i[5],
+                     'typeofbill': i[6], 'dateofpayment': i[7], 'paystatus': i[8]})
     context['data'] = data
     con.close()
-    return render(request,'myadmin/orders.html',context)
+    return render(request, 'myadmin/orders.html', context)
 
 
-def orderdetail(request,bid):
+def orderdetail(request, bid):
     if not request.session.get('user_permission') in adminlogin:
         return redirect(myadmin)
 
@@ -388,10 +391,11 @@ def orderdetail(request,bid):
     cr.execute(q)
     data = []
     for i in cr.fetchall():
-        data.append({'id':i[0],'title':i[1],'price':i[2],'qty':i[3],'total':i[4]})
-    context['data']=data
+        data.append({'id': i[0], 'title': i[1], 'price': i[2], 'qty': i[3], 'total': i[4]})
+    context['data'] = data
     context['total'] = sum(i['total'] for i in data)
-    return render(request,'myadmin/orderdetail.html',context)
+    return render(request, 'myadmin/orderdetail.html', context)
+
 
 # client views
 
@@ -450,7 +454,7 @@ def account(request):
 
     if request.method == 'POST':
         email = request.POST.get('email')
-        password = hash_password(email,request.POST.get('password'))
+        password = hash_password(email, request.POST.get('password'))
 
         con = sqlite3.connect('db.sqlite3')
         cr = con.cursor()
@@ -472,9 +476,14 @@ def register(request):
         return redirect(home)
 
     if request.method == "POST":
-        name = request.POST.get('name').lower()
-        email = request.POST.get('email').lower()
-        password = hash_password(email,request.POST.get('password1'))
+        otp = request.POST.get('otp')
+        regData = request.session.get('regData')
+        print(otp, regData)
+        if otp != regData['otp']:
+            return HttpResponse("OTP Doesn't match")
+        name = regData.get('name').lower()
+        email = regData.get('email').lower()
+        password = hash_password(email, regData.get('password'))
 
         con = sqlite3.connect('db.sqlite3')
         cr = con.cursor()
@@ -487,10 +496,21 @@ def register(request):
         q = f"insert into user values('{name}','{email}','{password}','user')"
         cr.execute(q)
         con.commit()
+        del request.session['regData']
         con.close()
         return redirect(account)
 
     return render(request, 'client/register.html')
+
+
+@csrf_exempt
+def sentOtp(request):
+    name = request.POST['name']
+    email = request.POST['email']
+    password = request.POST['password']
+    otp = mail.send_Mail(email)
+    request.session['regData'] = {'name': name, 'email': email, 'password': password, 'otp': otp}
+    return HttpResponse('sent')
 
 
 def categorynames(request):
@@ -521,11 +541,11 @@ def products(request, id):
     for i in cr.fetchall():
         data.append({'id': i[0], 'name': i[1], 'price': i[2], 'description': i[3], 'photo': i[4]})
 
-    paginator = Paginator(data,9)
+    paginator = Paginator(data, 9)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context['data'] = page_obj
-    context['pages'] = range(1,int(page_obj.paginator.num_pages+1)) if page_obj.paginator.num_pages>1 else None
+    context['pages'] = range(1, int(page_obj.paginator.num_pages + 1)) if page_obj.paginator.num_pages > 1 else None
     return render(request, 'client/products.html', context)
 
 
@@ -548,7 +568,7 @@ def add_to_cart(request, id):
             request.session['cart'] = all_items
             total = sum(i['total'] for i in request.session.get('cart'))
 
-            return JsonResponse({'total':total,'length':len(request.session.get('cart'))})
+            return JsonResponse({'total': total, 'length': len(request.session.get('cart'))})
 
     con = sqlite3.connect('db.sqlite3')
     cr = con.cursor()
@@ -569,17 +589,18 @@ def add_to_cart(request, id):
     request.session['cart'] = all_items
     total = sum(i['total'] for i in request.session.get('cart'))
 
-    return JsonResponse({'total':total,'length':len(request.session.get('cart'))})
+    return JsonResponse({'total': total, 'length': len(request.session.get('cart'))})
 
 
 def checkout(request):
     if not request.session.get('cart'):
-        return render(request,'client/checkout.html')
+        return render(request, 'client/checkout.html')
 
-    total= sum(i['total'] for i in request.session.get('cart'))
-    return render(request, 'client/checkout.html',{'data':request.session.get('cart'),'total':total})
+    total = sum(i['total'] for i in request.session.get('cart'))
+    return render(request, 'client/checkout.html', {'data': request.session.get('cart'), 'total': total})
 
-def inc_dec(request,id,operation):
+
+def inc_dec(request, id, operation):
     all_items = request.session.get('cart')
     for i in all_items:
         if i['id'] == id:
@@ -608,10 +629,10 @@ def contact(request):
 
 def proceed_to_pay(request):
     if not request.session.get('cart') or not request.session.get('user'):
-        return HttpResponse('Not Found',status=404)
+        return HttpResponse('Not Found', status=404)
 
     total = sum(i['total'] for i in request.session.get('cart'))
-    return render(request,'client/proceed_to_pay.html',{'total':total})
+    return render(request, 'client/proceed_to_pay.html', {'total': total})
 
 
 def payment_action(request):
@@ -628,6 +649,7 @@ def payment_action(request):
         payStatus = 'pending'
     else:
         payStatus = 'paid'
+    # print(request.session.get('cart'))
 
     conn = sqlite3.connect('db.sqlite3')
     cr = conn.cursor()
@@ -646,6 +668,43 @@ def payment_action(request):
         cr = conn.cursor()
         cr.execute(query_detail)
         conn.commit()
+
+    body = f"""
+        <html>
+            <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+            </head>
+            <body>
+            Thank You for shopping with E-Shop {name}. Your Order will be delivered soon at {address}.
+            Your will be informed for delivery at your Mobile Number: {mobile}.\n
+            Your Billing ID is {result[0]}. 
+            For more information Please Contact at 8054052772(Customer Care).\n\n 
+            <table style="border=1;">
+            <thead>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            </thead>
+            <tbody>
+        """
+    for i in request.session.get('cart'):
+        body += f"""
+            <tr>
+            <td>{i['name']}</td>
+            <td style="text-align:center;">{i['qty']}</td>
+            <td>{i['total']}</td>
+            </tr>
+            """
+    body += f"""
+        <th colspan=2>Grand Total</th>
+        <th>{total}</th>
+        """
+    body += """
+        </tbody>
+        </table>
+        </body>
+        """
+    mail.send_Receipt(email, body)
     return JsonResponse({'billid': result[0]})
 
 

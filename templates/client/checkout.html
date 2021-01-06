@@ -45,7 +45,7 @@
                     <div class="cart-sec simpleCart_shelfItem">
                         <div class="cart-item cyc">
                             <a href="{% url 'single' id=row.id %}"><img src="{{ row.photo }}" class="img-responsive"
-                                                                        alt="{{ row.photo }}"></a>
+                                                                        alt="{{ row.photo }}" style="max-height: 200px; max-width: 150px;"></a>
                         </div>
                         <div class="cart-item-info">
                             <h3><a href="{% url 'single' id=row.id %}" class="text-capitalize"> {{ row.name }} </a></h3>

@@ -13,12 +13,41 @@
                 }
             })
             $('#register').click(function () {
-                if ($('#password1').val() != $('#password2').val()) {
+                if ($('#password').val() != $('#password2').val()) {
                     alert('Passwords Doesn\'t Match');
                 }
             })
         })
     </script>
+    <style>
+        .reg form input[type="text"], .reg form input[type="password"], .reg form input[type="email"] {
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+            font-weight: 400;
+            border: 1px solid #e6e6e6;
+            outline: none;
+            color: #000;
+        }
+
+        .reg form input[type=button] {
+            border: none;
+            color: #ffffff;
+            padding: 9px 35px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 0 0 32px 0;
+            background: #816263;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
 {% include 'client/header.html' %}
@@ -47,11 +76,11 @@
                     <p>Welcome, please enter the following details to continue.</p>
                     <p>If you have previously registered with us, <a href="{% url 'account' %}">
                         click here</a></p>
-                    <form method="post">
-                        {% csrf_token %}
+                    <form id="registerForm">
                         <ul>
                             <li class="text-info">Name:</li>
-                            <li><input type="text" name="name" required></li>
+                            <li><input data-msg-required="Please fill this field" type="text" data-rule-required="true"
+                                       name="name" id="name" required></li>
                         </ul>
                         {#                        <ul>#}
                         {#                            <li class="text-info">Last Name:</li>#}
@@ -59,23 +88,24 @@
                         {#                        </ul>#}
                         <ul>
                             <li class="text-info">Email:</li>
-                            <li><input type="text" name="email" required></li>
+                            <li><input type="email" data-rule-required="true" id="email" name="email" required></li>
                         </ul>
                         <ul>
                             <li class="text-info">Password:</li>
-                            <li><input type="password" name="password1" id="password1"
+                            <li><input type="password" data-rule-required="true" name="password" id="password"
                                        minlength="8" required></li>
                         </ul>
                         <ul>
                             <li class="text-info">Re-enter Password:</li>
-                            <li><input type="password" name="password2" id="password2"
+                            <li><input type="password" data-rule-required="true"
+                                       name="password2" id="password2"
                                        minlength="8" required></li>
                         </ul>
                         {#                        <ul>#}
                         {#                            <li class="text-info">Mobile Number:</li>#}
                         {#                            <li><input type="text" value=""></li>#}
                         {#                        </ul>#}
-                        <input type="submit" onclick="return $('#password1').val() == $('#password2').val()"
+                        <input type="button" onclick="sendotp()"
                                id="register" value="REGISTER NOW" disabled>
 
                         <div class="form-check checkbox-inline">
@@ -108,7 +138,69 @@
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Please Enter OTP</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'register' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="otp">OTP</label>
+                        <input type="text" class="form-control" id="otp" name="otp">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- registration-form -->
+{% load static %}
 {% include 'client/footer.html' %}
+<script src="{% static 'dist/jquery.validate.js' %}"></script>
+<script>
+    function sendotp() {
+        alert("hello");
+        if ($('#registerForm').valid()) {
+            var email = document.getElementById('email').value;
+            console.log(email);
+            var formData = new FormData();
+            formData.append('name', document.getElementById('name').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('password', document.getElementById('password').value);
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var output = this.responseText;
+                    console.log(output);
+                    if (output == 'sent') {
+                        $('#exampleModalCenter').modal('show');
+                    } else {
+                        alert("Email Not Sent!!!")
+                    }
+                }
+            };
+            xhttp.open("post", "sentOtp", true);
+            xhttp.send(formData);
+
+        }
+    }
+</script>
 </body>
 </html>

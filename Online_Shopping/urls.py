@@ -39,7 +39,8 @@ urlpatterns = [
     # client urls
     path('',home, name='home'),
     path('account/',account,name='account'),
-    path('register/',register,name='register'),
+    path('register',register,name='register'),
+    path('sentOtp',sentOtp,name='sentOtp'),
     path('checkout/',checkout,name='checkout'),
     path('contact/',contact,name='contact'),
     path('userlogout/',userlogout,name='userlogout'),
