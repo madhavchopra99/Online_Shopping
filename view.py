@@ -83,7 +83,7 @@ def addcategory(request):
                 con.close()
                 return render(request, 'myadmin/addcategory.html', context)
 
-        q = f"insert into category values(NULL,'{name}','{description}')"
+        q = f"""insert into category values(NULL,"{name}","{description}")"""
         cr.execute(q)
         con.commit()
         con.close()
@@ -152,7 +152,7 @@ def updatecategory(request, id):
                     request, messages.ERROR, 'Duplicate Category Name')
                 return redirect(updatecategory, id)
 
-        q = f"update category set name='{name}', description='{description}' where id={id}"
+        q = f"""update category set name="{name}", description="{description}" where id={id}"""
         cr.execute(q)
         con.commit()
         con.close()
@@ -194,7 +194,7 @@ def addproduct(request):
         fs = FileSystemStorage()
         filename = fs.save('product images/' + photo.name, photo)
         fileurl = fs.url(filename)
-        q = f"insert into product values (NULL ,'{name}',{price},{priceafterdiscount},'{description}','{brand}',{category},'{fileurl}')"
+        q = f"""insert into product values (NULL ,"{name}",{price},{priceafterdiscount},"{description}","{brand}",{category},"{fileurl}")"""
         cr.execute(q)
         con.commit()
         messages.add_message(request, messages.SUCCESS,
@@ -275,9 +275,9 @@ def updateproduct(request, id):
             fs = FileSystemStorage()
             filename = fs.save('product images/' + photo.name, photo)
             fileurl = fs.url(filename)
-            q = f"update product set name='{name}', price={price}, priceAfterdiscount=" \
-                f" {priceafterdiscount},description='{description}',brand='{brand}'," \
-                f"category_id={category},photo = '{fileurl}' where id={id}"
+            q = f"""update product set name="{name}", price={price}, priceAfterdiscount=
+                {priceafterdiscount},description="{description}",brand="{brand}",
+                category_id={category},photo = "{fileurl}" where id={id}"""
             cr.execute(q)
             con.commit()
             messages.add_message(request, messages.SUCCESS,
@@ -287,9 +287,9 @@ def updateproduct(request, id):
             return redirect(viewproduct)
 
         else:
-            q = f"update product set name='{name}', price={price}, priceAfterdiscount=" \
-                f" {priceafterdiscount},description='{description}',brand='{brand}'," \
-                f"category_id={category} where id={id}"
+            q = f"""update product set name="{name}", price={price}, priceAfterdiscount=
+                {priceafterdiscount},description="{description}",brand="{brand}",
+                category_id={category} where id={id}"""
             cr.execute(q)
             con.commit()
             messages.add_message(request, messages.SUCCESS,
@@ -478,9 +478,10 @@ def register(request):
     if request.method == "POST":
         otp = request.POST.get('otp')
         regData = request.session.get('regData')
-        print(otp, regData)
+
         if otp != regData['otp']:
             return HttpResponse("OTP Doesn't match")
+
         name = regData.get('name').lower()
         email = regData.get('email').lower()
         password = hash_password(email, regData.get('password'))
@@ -491,9 +492,9 @@ def register(request):
         cr.execute(q)
         for i in cr.fetchall():
             if i[0] == email:
-                return redirect(register)
+                return HttpResponse('Email Already Registered',status=404)
 
-        q = f"insert into user values('{name}','{email}','{password}','user')"
+        q = f"""insert into user values("{name}","{email}","{password}","user")"""
         cr.execute(q)
         con.commit()
         del request.session['regData']
@@ -503,7 +504,7 @@ def register(request):
     return render(request, 'client/register.html')
 
 
-@csrf_exempt
+
 def sentOtp(request):
     name = request.POST['name']
     email = request.POST['email']
@@ -653,7 +654,7 @@ def payment_action(request):
 
     conn = sqlite3.connect('db.sqlite3')
     cr = conn.cursor()
-    Query_for_bill = f"insert into billing (`email`, `address`, `totalAmount`, `mobile`, `typeofbill`, `dateofpayment`, `paystatus`,`name`) values ('{email}', '{address}','{total}', '{mobile}','{paymentmode}','{dateOfOrder}', '{payStatus}','{name}')"
+    Query_for_bill = f"""insert into billing (`email`, `address`, `totalAmount`, `mobile`, `typeofbill`, `dateofpayment`, `paystatus`,`name`) values ("{email}", "{address}","{total}", "{mobile}","{paymentmode}","{dateOfOrder}", "{payStatus}","{name}")"""
     cr.execute(Query_for_bill)
     conn.commit()
 
@@ -663,8 +664,7 @@ def payment_action(request):
     result = cr.fetchone()
 
     for item in request.session['cart']:
-        query_detail = "insert into billDetail (`title`, `price`, `qty`, `total_price`, `billing_id`) values ('{}','{}','{}','{}','{}')".format(
-            item['name'], item['price'], item['qty'], item['total'], result[0])
+        query_detail = f"""insert into billDetail (`title`, `price`, `qty`, `total_price`, `billing_id`) values ("{item['name']}","{item['price']}","{item['qty']}","{item['total']}","{result[0]}")"""
         cr = conn.cursor()
         cr.execute(query_detail)
         conn.commit()
