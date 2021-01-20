@@ -178,7 +178,7 @@
 <script src="{% static 'dist/jquery.validate.js' %}"></script>
 <script>
     function sendotp() {
-        if ($('#registerForm').valid()) {
+        if ($('#registerForm').valid() && $('#password').val() == $('#password2').val()) {
             var email = document.getElementById('email').value;
             console.log(email);
             var formData = new FormData();
@@ -201,7 +201,6 @@
             };
             xhttp.open("post", "sentOtp", true);
             xhttp.send(formData);
-
         }
     }
 </script>

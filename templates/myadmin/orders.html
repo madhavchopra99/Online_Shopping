@@ -47,12 +47,11 @@
                             </option>
                         </select>
                     </td>
-                    <td><input type="submit" value="Update" class="btn btn-primary btn-sm"></td>
+                    <td><input type="submit" value="Update" class="btn btn-success btn-sm"></td>
                 </form>
                 <td><a href="{% url 'orderdetail' bid=row.id %}" class="btn btn-primary btn-sm">Details</a></td>
             </tr>
         {% endfor %}
-
         </tbody>
     </table>
 {% endblock %}
