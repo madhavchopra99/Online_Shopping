@@ -1,19 +1,16 @@
 import email.message
 import email, smtplib, ssl
 from random import choices
+from os import environ
 
-
-sender = 'python.vmm.2020@gmail.com'
-password = 'python@2021'
+sender = environ['EMAIL_USER']
+password = environ['EMAIL_PASS']
 
 
 # from email import encoders
 # from email.mime.base import MIMEBase
 # from email.mime.multipart import MIMEMultipart
 # from email.mime.text import MIMEText
-
-# sender = 'python.vmm@gmail.com'
-# password = 'vmmpython'
 
 
 def generateOTP():
@@ -46,8 +43,9 @@ def send_Mail(receiver):
 
 def send_Receipt(receiver, body):
     try:
-        sender = 'python.vmm.2020@gmail.com'
-        password = 'python@2021'
+        sender = environ['EMAIL_USER']
+        password = environ['EMAIL_PASS']
+
         with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
             # with smtplib.SMTP('localhost',1025) as smtp:
             smtp.ehlo()
