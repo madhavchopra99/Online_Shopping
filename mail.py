@@ -1,5 +1,7 @@
 import email.message
-import email, smtplib, ssl
+import email
+import smtplib
+import ssl
 from random import choices
 from os import environ
 
@@ -15,7 +17,7 @@ password = environ['EMAIL_PASS']
 
 def generateOTP():
     digits = "0123456789"
-    return ''.join(choices(digits,k=4))
+    return ''.join(choices(digits, k=4))
 
 
 # receiver = 'rahul@vmmeducation.com'
@@ -62,7 +64,6 @@ def send_Receipt(receiver, body):
             msg.set_payload(body)
             smtp.sendmail(sender, receiver, msg.as_string())
             print('Sent')
-
 
     except smtplib.SMTPException:
         print("Not Sent")
